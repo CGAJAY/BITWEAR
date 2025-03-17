@@ -25,7 +25,7 @@ Welcome to **BitWear** – where technology meets fashion! We offer a curated co
 ## 📂 Project Structure
 
 ```bash
-bitwear/
+/
 ├── client/       # Next.js frontend
 │   ├── src/
 │   ├── public/
@@ -39,7 +39,7 @@ bitwear/
 ├── server/        # Express.js backend
 │   ├── src/        # Backend source code
 │   │   ├── controllers/   # Handles request logic
-│   │   ├── db/            # Configuration files and models for database schema
+│   │   ├── db/           # Configuration files and models for database schema
 │   │   ├── routes/        # API route definitions
 │   │   ├── middlewares/    # Custom middlewares
 │   │   ├── utils/         # Utility functions
