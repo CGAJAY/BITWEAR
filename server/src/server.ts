@@ -1,31 +1,44 @@
-import express from "express";
-import { configDotenv } from "dotenv";
-import cookieParser from "cookie-parser";
-import connectDB from "./db/connectDB";
-import { StatusCodes } from "http-status-codes";
+import { configDotenv } from 'dotenv';
+import { createServer } from 'http';
+import { Server, Socket } from 'socket.io';
+import app from './app';
+import connectDB from './db/connectDB';
 
 configDotenv(); // Load .env file
-const app = express(); // Create an Express app
-const PORT = process.env.PORT; // Get the port from env
 
-// middlewares
-app.use(express.json()); // Parse JSON bodies
-app.use(cookieParser()); // Parse cookies
+const PORT = process.env.PORT || 3000; 
+
+// Create HTTP server with Express app
+const server = createServer(app);
+
+// Initialize Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL, 
+  },
+});
+
+// Socket.IO connection handling
+// io.on('connection', (socket: Socket) => {
+//   console.log('A user connected:', socket.id);
+
+//   // Message back to the client
+//   socket.on('message', (msg: string) => {
+//     console.log('Message received:', msg);
+//     socket.emit('message', `Server says: ${msg}`);
+//   });
+
+//   socket.on('disconnect', () => {
+//     console.log('User disconnected:', socket.id);
+//   });
+// });
 
 // Connect to MongoDB
-connectDB();
+connectDB()
 
-app.get("/", (req, res) => {
-	res.status(StatusCodes.OK).json({ message: "Silence is golden" });
-});
-
-// Response message for undefined routes
-app.use("*", (req, res) => {
-	res.status(StatusCodes.NOT_FOUND).json({
-		message: "Not found", 
-	});
-});
-
-app.listen(PORT, () => {
+// Start server
+server.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
 });
+
+  

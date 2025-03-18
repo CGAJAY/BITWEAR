@@ -43,7 +43,8 @@ Welcome to **BitWear** – where technology meets fashion! We offer a curated co
 │   │   ├── routes/        # API route definitions
 │   │   ├── middlewares/    # Custom middlewares
 │   │   ├── utils/         # Utility functions
-│   │   ├── server.ts      # Entry point that starts the server
+│   │   ├── app.ts         # HTTP configuration
+│   │   ├── server.ts      # Server startup + Socket.IO
 │   ├── tsconfig.json
 │   ├── package.json
 │   └── .env
