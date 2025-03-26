@@ -54,16 +54,17 @@ export default function Header() {
             </button>
 
             {/* Visible on all devices */}
-            <button className="p-2 hover:text-gray-600 transition">
-              <User size={20} />
-            </button>
-            <button className="p-2 hover:text-gray-600 transition">
+            <Link href="/cart" className="p-2 hover:text-gray-600 transition bg-amber-300">
               <ShoppingBag size={20} />
-            </button>
-            <button className="p-2 hover:text-gray-600 transition">
-              <Heart size={20} />
-            </button>
+            </Link>
 
+            <Link href="/liked" className="p-2 hover:text-gray-600 transition">
+              <Heart size={20} />
+            </Link>
+
+            <Link href="/profile" className="p-2 hover:text-gray-600 transition">
+              <User size={20} />
+            </Link>
             {/* Hamburger Menu Button (Visible on mobile) */}
             <button
               className="md:hidden p-2 hover:text-gray-600 transition"
@@ -71,6 +72,7 @@ export default function Header() {
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
+
           </div>
         </div>
       </header>
