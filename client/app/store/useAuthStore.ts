@@ -7,10 +7,10 @@ type AuthStore = {
   loading: boolean;
   login: (email: string, password: string) => Promise<{ status: string; message: string; user?: object }>;
   logout: () => Promise<{ status: string; message: string }>;
-  addToCart: (item: { id: string; name: string; quantity: number }) => { status: string; message: string }; // Synchronous
-  removeFromCart: (itemId: string) => { status: string; message: string };
-  clearCart: () => { status: string; message: string };
-  loadCartFromLocalStorage: () => { status: string; message: string };
+  addToCart: (item: { id: string; name: string; quantity: number }) => Promise<{ status: string; message: string }>; // Asynchronous
+  removeFromCart: (itemId: string) => Promise<{ status: string; message: string }>;
+  clearCart: () => Promise<{ status: string; message: string }>;
+  loadCartFromLocalStorage: () => Promise<{ status: string; message: string }>;
   setLoading: (isLoading: boolean) => void;
 };
 
@@ -41,7 +41,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ loading: false });
     return { status: 'success', message: 'Logout successful!' };
   },
-  addToCart: (item) => {
+  addToCart: async (item) => {
     set((state) => {
       const updatedCart = [...state.cartItems, item];
       if (!state.isLoggedIn) {
@@ -49,9 +49,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
       }
       return { cartItems: updatedCart };
     });
-    return { status: 'success', message: 'Item added to cart.' };
+    return new Promise<{ status: string; message: string }>((resolve) => {
+      resolve({ status: 'success', message: 'Item added to cart.' });
+    });
   },
-  removeFromCart: (itemId) => {
+  removeFromCart: async (itemId) => {
     set((state) => {
       const updatedCart = state.cartItems.filter(item => item.id !== itemId);
       if (!state.isLoggedIn) {
@@ -59,22 +61,30 @@ export const useAuthStore = create<AuthStore>((set) => ({
       }
       return { cartItems: updatedCart };
     });
-    return { status: 'success', message: 'Item removed from cart.' };
+    return new Promise<{ status: string; message: string }>((resolve) => {
+      resolve({ status: 'success', message: 'Item removed from cart.' });
+    });
   },
-  clearCart: () => {
+  clearCart: async () => {
     set(() => {
       localStorage.removeItem('cart');
       return { cartItems: [] };
     });
-    return { status: 'success', message: 'Cart cleared.' };
+    return new Promise<{ status: string; message: string }>((resolve) => {
+      resolve({ status: 'success', message: 'Cart cleared.' });
+    });
   },
-  loadCartFromLocalStorage: () => {
+  loadCartFromLocalStorage: async () => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       set({ cartItems: JSON.parse(storedCart) });
-      return { status: 'success', message: 'Cart loaded from localStorage.' };
+      return new Promise<{ status: string; message: string }>((resolve) => {
+        resolve({ status: 'success', message: 'Cart loaded from localStorage.' });
+      });
     } else {
-      return { status: 'info', message: 'No cart found in localStorage.' };
+      return new Promise<{ status: string; message: string }>((resolve) => {
+        resolve({ status: 'info', message: 'No cart found in localStorage.' });
+      });
     }
   },
   setLoading: (isLoading: boolean) => set({ loading: isLoading }),
