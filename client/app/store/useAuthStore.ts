@@ -1,37 +1,44 @@
-import {create} from 'zustand';
+import { create } from 'zustand';
 
 // Define the types for our state
 type AuthStore = {
   isLoggedIn: boolean;
   cartItems: Array<{ id: string; name: string; quantity: number }>;
+  loading: boolean;
   login: (email: string, password: string) => Promise<{ status: string; message: string; user?: object }>;
   logout: () => Promise<{ status: string; message: string }>;
-  addToCart: (item: { id: string; name: string; quantity: number }) => { status: string; message: string };
+  addToCart: (item: { id: string; name: string; quantity: number }) => { status: string; message: string }; // Synchronous
   removeFromCart: (itemId: string) => { status: string; message: string };
   clearCart: () => { status: string; message: string };
   loadCartFromLocalStorage: () => { status: string; message: string };
+  setLoading: (isLoading: boolean) => void;
 };
 
 export const useAuthStore = create<AuthStore>((set) => ({
-  isLoggedIn: false, // Default logged-out state
-  cartItems: [], // Default empty cart state
+  isLoggedIn: false,
+  cartItems: [],
+  loading: false,
   login: async (email, password) => {
+    set({ loading: true });
     try {
-      // Simulate login API call (can replace with real API logic)
       if (email === 'user@example.com' && password === 'password') {
-        const user = { email }; // Mock user data (can be replaced with actual data)
+        const user = { email };
         set({ isLoggedIn: true });
+        set({ loading: false });
         return { status: 'success', message: 'Login successful!', user };
       } else {
+        set({ loading: false });
         return { status: 'error', message: 'Invalid email or password.' };
       }
     } catch (error) {
+      set({ loading: false });
       return { status: 'error', message: 'Login failed. Please try again.' };
     }
   },
   logout: async () => {
-    // Simulate logout logic here (e.g., clearing cookies, tokens)
+    set({ loading: true });
     set({ isLoggedIn: false });
+    set({ loading: false });
     return { status: 'success', message: 'Logout successful!' };
   },
   addToCart: (item) => {
@@ -44,7 +51,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
     });
     return { status: 'success', message: 'Item added to cart.' };
   },
-  
   removeFromCart: (itemId) => {
     set((state) => {
       const updatedCart = state.cartItems.filter(item => item.id !== itemId);
@@ -55,15 +61,13 @@ export const useAuthStore = create<AuthStore>((set) => ({
     });
     return { status: 'success', message: 'Item removed from cart.' };
   },
-  
   clearCart: () => {
     set(() => {
-      localStorage.removeItem('cart'); // Clear the cart from localStorage
+      localStorage.removeItem('cart');
       return { cartItems: [] };
     });
     return { status: 'success', message: 'Cart cleared.' };
   },
-
   loadCartFromLocalStorage: () => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
@@ -73,4 +77,5 @@ export const useAuthStore = create<AuthStore>((set) => ({
       return { status: 'info', message: 'No cart found in localStorage.' };
     }
   },
+  setLoading: (isLoading: boolean) => set({ loading: isLoading }),
 }));
